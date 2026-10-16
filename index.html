@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Ben&#39;s Networth</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffaf1;--ink:#1d2a24;--mute:#6b7469;--line:#e2d9c8;--acc:#1f6b4f;--warn:#b4531c;--bad:#a8322d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b241f;--ink:#ece6d8;--mute:#9aa596;--line:#2c3a32;--acc:#5fc79a;--warn:#e29256;--bad:#ea7b74}}
+:root[data-theme="dark"]{--bg:#121815;--card:#1b241f;--ink:#ece6d8;--mute:#9aa596;--line:#2c3a32;--acc:#5fc79a;--warn:#e29256;--bad:#ea7b74}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,system-ui,"Segoe UI",sans-serif}
+main{max-width:560px;margin:0 auto;padding:16px 14px 40px}
+h1,.big{font-family:Fraunces,Georgia,serif;font-weight:600}
+h1{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:4px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.big{font-size:44px;line-height:1;margin:2px 0}
+.mute{color:var(--mute);font-size:13px}.ok{color:var(--acc)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 4px}.bar i{display:block;height:100%;background:var(--acc)}
+nav{display:flex;gap:6px;margin:0 0 12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 0;z-index:5}
+nav button{flex:1;padding:10px 4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:600 13px inherit}
+nav button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+.sec{display:none}.sec.on{display:block}
+label{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
+label:last-child{border:0}
+input{width:104px;text-align:right;font:16px inherit;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.row{display:flex;justify-content:space-between;padding:5px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 3px;text-align:right;border-bottom:1px solid var(--line)}th{color:var(--mute);font-weight:500}td:first-child,th:first-child{text-align:left}
+td input{width:76px;padding:5px}
+button.act{margin-top:8px;padding:9px 12px;border-radius:10px;border:1px solid var(--acc);background:none;color:var(--acc);font:600 13px inherit}
+svg{width:100%;height:auto;display:block}
+</style></head><body><main>
+<h1>Ben's Ledger</h1>
+<nav><button data-t="r" class="on">Retirement</button><button data-t="p">Portfolio</button><button data-t="c">Cash flow</button></nav>
+
+<section class="sec on" id="r">
+ <div class="card"><div class="mute">Time to retirement</div><div class="big"><span id="yl"></span> yrs</div><div class="mute" id="ys"></div>
+  <div class="bar"><i id="pb"></i></div><div class="mute" id="pt"></div></div>
+ <div class="card"><div id="verdict" style="font-weight:600"></div><div class="mute" id="vsub"></div>
+  <div id="chart" style="margin-top:8px"></div><div class="mute">All figures in today's dollars (after inflation).</div></div>
+ <div class="card"><div class="row"><span>Net worth now</span><b id="nw"></b></div><div class="row"><span>Retirement number</span><b id="need"></b></div>
+  <div class="row"><span>Projected at retirement</span><b id="proj"></b></div><div class="row"><span>Emergency fund</span><b id="ef"></b></div></div>
+ <div class="card"><div class="mute">Assumptions</div><div id="as"></div></div>
+</section>
+
+<section class="sec" id="p">
+ <div class="card"><div class="mute">Next dollar goes to</div><div class="big" id="nx" style="font-size:30px"></div><div class="mute" id="nxs"></div></div>
+ <div class="card"><div class="row" style="padding-top:0"><b>Holdings</b><span class="mute">units · avg cost · price</span></div><div id="pls" style="padding:4px 0 4px"></div><div class="mute" style="padding-bottom:8px"><span id="lv"></span> <button class="act" id="rf" style="margin:0 0 0 6px;padding:4px 10px">Refresh</button></div><div id="hl"></div>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><input id="nt" placeholder="Ticker" style="width:90px;text-align:left"><select id="nb" style="font-size:16px"></select><select id="nc" style="font-size:16px"><option>SGD</option><option>USD</option><option>HKD</option></select><button class="act" id="addh" style="margin:0">Add holding</button></div>
+  <div class="mute" style="margin-top:8px">Prices update automatically when you open the app (about 15 min delayed). You can still overwrite any price by hand.</div></div>
+ <div class="card"><table><thead><tr><th>Bucket</th><th>Value</th><th>Now</th><th>Target %</th><th>Gap</th></tr></thead><tbody id="tb"></tbody></table></div>
+</section>
+
+<section class="sec" id="c">
+ <div class="card"><div class="mute">Left over each month</div><div class="big" id="lo"></div><div class="mute" id="lor"></div>
+  <button class="act" id="use">Use as monthly investing</button></div>
+ <div class="card"><div id="cf"></div></div>
+</section>
+</main>
+<script>
+const D={age:34,ret:60,contrib:2170,rr:6,inf:2.5,swr:4,spend:2930,cpf:0,efT:30000,
+b_cash:11000,fxu:1.281155,fxh:0.1632415,
+hold:[{t:'CSPX',n:'iShares S&P 500',b:'us',ccy:'USD',u:174.1964,c:617,p:863,d:'implied by your sheet, update it'},{t:'O39',n:'OCBC',b:'bank',ccy:'SGD',u:1032,c:8.59,p:31.66,d:'2 Oct 2026'},{t:'U11',n:'UOB',b:'bank',ccy:'SGD',u:500,c:20.6,p:40.52,d:'6 Jul 2026 (stale)'},{t:'C38U',n:'CICT',b:'reit',ccy:'SGD',u:2000,c:2.3,p:2.4,d:'approx, undated'}],
+t_us:47.5,t_bank:12.5,t_reit:17.5,t_hk:7.5,t_gold:4,t_cash:11,
+inc:5100,e_tr:119,e_meal:1261,e_ph:420,e_par:400,e_tax:230,e_os:500};
+try{Object.assign(D,JSON.parse(localStorage.getItem('ledger1')||'{}'))}catch(e){}
+const PX={v:'2026-10-16',O39:[29.06,'16 Oct 2026'],U11:[41.88,'16 Oct 2026'],C38U:[2.22,'13 Oct 2026 close'],CSPX:[843.94,'14 Oct 2026']};
+if((D.pv||'')<PX.v){D.hold.forEach(h=>{const q=PX[h.t];if(q){h.p=q[0];h.d=q[1]}});D.pv=PX.v}
+const $=i=>document.getElementById(i),m=n=>'S$'+Math.round(n).toLocaleString('en-SG');
+const inp=(k,l)=>`<label>${l}<input type="number" inputmode="decimal" step="any" data-k="${k}" value="${D[k]}"></label>`;
+$('as').innerHTML=[['age','Current age'],['ret','Retire at age'],['contrib','Monthly investing (S$)'],['spend','Retirement spend / month (S$)'],['cpf','CPF LIFE payout / month (S$)'],['rr','Expected return %'],['inf','Inflation %'],['swr','Safe withdrawal rate %'],['efT','Emergency fund target (S$)'],['b_cash','Cash + war chest (S$)'],['fxu','USD/SGD'],['fxh','HKD/SGD']].map(a=>inp(...a)).join('');
+$('cf').innerHTML=[['inc','Net salary'],['e_tr','Transport'],['e_meal','Meals + leisure'],['e_ph','Phone + household'],['e_par','Parents allowance'],['e_tax','Income tax'],['e_os','Overseas']].map(a=>inp(...a)).join('');
+const B=[['us','Global / US (CSPX)'],['bank','SG banks'],['reit','REITs'],['hk','HK / China'],['gold','Gold'],['cash','Cash / bonds']];
+$('tb').innerHTML=B.map(([k,l])=>`<tr><td>${l}</td><td id="v_${k}"></td><td id="n_${k}"></td><td><input type="number" inputmode="decimal" data-k="t_${k}" value="${D['t_'+k]}" style="width:56px"></td><td id="g_${k}"></td></tr>`).join('');
+const lsave=()=>{save()};
+let stt;const save=()=>{D.ts=Date.now();lsave();clearTimeout(stt);stt=setTimeout(push,800)};
+const hdr=()=>{let p='';try{p=localStorage.getItem('ledgerpin')||''}catch(e){}return{'x-pin':p}};
+async function push(){try{await fetch('/api/state',{method:'PUT',headers:hdr(),body:JSON.stringify(D)})}catch(e){}}
+async function pull(){try{let r=await fetch('/api/state',{headers:hdr(),cache:'no-store'});
+ if(r.status===401){const q=prompt('Enter your sync PIN');if(q){try{localStorage.setItem('ledgerpin',q)}catch(e){}r=await fetch('/api/state',{headers:hdr(),cache:'no-store'})}}
+ if(!r.ok)return;const R=await r.json();
+ if(R.ts>(D.ts||0)){localStorage.setItem('ledger1',JSON.stringify(R));location.reload()}else if((D.ts||0)>(R.ts||0))push()}catch(e){}}
+const fx=c=>c==='USD'?D.fxu:c==='HKD'?D.fxh:1,hv=h=>h.u*(h.p||h.c)*fx(h.ccy);
+const bv=k=>k==='cash'?D.b_cash:D.hold.filter(h=>h.b===k).reduce((s,h)=>s+hv(h),0);
+$('nb').innerHTML=B.filter(b=>b[0]!=='cash').map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+function renderH(){$('hl').innerHTML=D.hold.map((h,i)=>{const f=(k,l)=>`<label style="flex:1;display:block;border:0;padding:0"><span class="mute">${l}</span><input style="width:100%" type="number" inputmode="decimal" step="any" data-h="${i}" data-f="${k}" value="${h[k]}"></label>`;
+return `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div class="row" style="padding:0"><b>${h.t} <span class="mute">${h.n||h.ccy}</span></b><span id="hv${i}"></span></div><div style="display:flex;gap:6px;margin:6px 0">${f('u','Units')}${f('c','Avg cost')}${f('p','Price '+h.ccy)}</div><div class="mute">${h.d?'price: '+h.d:'set a price'}</div><div style="display:flex;gap:6px;align-items:center;margin-top:6px"><span class="mute">Buy</span><input id="bu${i}" placeholder="units" inputmode="decimal" style="width:70px"><input id="bp${i}" placeholder="@ price" inputmode="decimal" style="width:80px"><button class="act" style="margin:0" data-buy="${i}">Add</button><button class="act" style="margin:0 0 0 auto;border-color:var(--line);color:var(--mute)" data-del="${i}">Remove</button></div></div>`}).join('')}
+function updateH(){let C=0,P=0;D.hold.forEach((h,i)=>{const e=$('hv'+i);if(!e)return;const has=h.p>0&&h.c>0,pl=has?h.u*(h.p-h.c)*fx(h.ccy):0;if(has){C+=h.u*h.c*fx(h.ccy);P+=pl}e.style.textAlign='right';e.innerHTML=m(hv(h))+(has?`<br><span class="${pl<0?'bad':'ok'}">${pl<0?'−':'+'}${m(Math.abs(pl))} (${(h.p/h.c*100-100).toFixed(1)}%)</span>`:'')});$('pls').innerHTML=C?`Unrealised P/L <b class="${P<0?'bad':'ok'}">${P<0?'−':'+'}${m(Math.abs(P))}</b> <span class="mute">(${(P/C*100).toFixed(1)}% on ${m(C)} cost)</span>`:''}
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.h===undefined)return;const h=D.hold[+t.dataset.h];h[t.dataset.f]=parseFloat(t.value)||0;if(t.dataset.f==='p')h.d='manual';save();calc()});
+document.addEventListener('click',e=>{const t=e.target,d=t.dataset;
+ if(t.id==='addh'){const s=$('nt').value.trim().toUpperCase();if(!s)return;D.hold.push({t:s,n:'',b:$('nb').value,ccy:$('nc').value,u:0,c:0,p:0,d:''});$('nt').value='';save();renderH();calc()}
+ if(d.buy!==undefined){const i=+d.buy,h=D.hold[i],u=parseFloat($('bu'+i).value)||0,p=parseFloat($('bp'+i).value)||0;if(u>0&&p>0){h.c=(h.u*h.c+u*p)/(h.u+u);h.u+=u;h.p=p;h.d='your last buy';save();renderH();calc()}}
+ if(d.del!==undefined){D.hold.splice(+d.del,1);save();renderH();calc()}});
+function calc(){
+ const tot=B.reduce((s,[k])=>s+bv(k),0), r=(1+D.rr/100)/(1+D.inf/100)-1, n=Math.max(0,D.ret-D.age);
+ const need=Math.max(0,(D.spend-D.cpf)*12/(D.swr/100||1)); let b=tot,pts=[b],fi=null;
+ if(b>=need)fi=D.age;
+ for(let y=1;y<=Math.max(n,1);y++){b=b*(1+r)+D.contrib*12;pts.push(b);if(fi===null&&b>=need)fi=D.age+y}
+ const proj=pts[n]??b, ok=proj>=need;
+ $('yl').textContent=n;$('ys').textContent=`Age ${D.age} → ${D.ret}`;
+ $('pb').style.width=Math.min(100,tot/(need||1)*100)+'%';
+ $('pt').textContent=`${Math.round(tot/(need||1)*100)}% of your retirement number already`;
+ $('verdict').innerHTML=ok?`<span class="ok">On track — ${m(proj-need)} above target</span>`:`<span class="bad">Short by ${m(need-proj)} at ${D.ret}</span>`;
+ $('vsub').textContent=fi===null?'Target not reached within horizon.':fi<=D.age?'You already have enough.':`Projected independence at about age ${fi}${fi<D.ret?` — ${D.ret-fi} yrs before target`:''}.`;
+ $('nw').textContent=m(tot);updateH();$('need').textContent=m(need);$('proj').textContent=m(proj);
+ const ef=D.b_cash/(D.efT||1);$('ef').innerHTML=`<span class="${ef<1?'warn':'ok'}">${m(D.b_cash)} / ${m(D.efT)} (${Math.round(ef*100)}%)</span>`;
+ const W=320,H=130,mx=Math.max(need,...pts)*1.05||1,X=i=>8+i*(W-16)/Math.max(n,1),Y=v=>H-8-v/mx*(H-16);
+ $('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}"><line x1="8" x2="${W-8}" y1="${Y(need)}" y2="${Y(need)}" stroke="var(--warn)" stroke-dasharray="4 4"/><polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="${pts.slice(0,n+1).map((v,i)=>X(i)+','+Y(v)).join(' ')}"/><text x="10" y="${Y(need)-4}" font-size="10" fill="var(--warn)">target</text></svg>`;
+ let gap=-1e9,nk='';
+ B.forEach(([k,l])=>{const a=bv(k)/tot*100,g=a-D['t_'+k];$('v_'+k).textContent=m(bv(k));$('n_'+k).textContent=a.toFixed(1)+'%';$('g_'+k).innerHTML=`<span class="${g<0?'warn':'mute'}">${g>0?'+':''}${g.toFixed(1)}</span>`;if(-g>gap){gap=-g;nk=l}});
+ $('nx').textContent=nk;$('nxs').textContent=`Most underweight by ${gap.toFixed(1)} pts. Targets sum to ${B.reduce((s,[k])=>s+D['t_'+k],0).toFixed(1)}%.`;
+ const exp=D.e_tr+D.e_meal+D.e_ph+D.e_par+D.e_tax+D.e_os,lo=D.inc-exp;
+ $('lo').textContent=m(lo);$('lo').className='big '+(lo<0?'bad':'ok');$('lor').textContent=`Spending ${m(exp)} · savings rate ${Math.round(lo/(D.inc||1)*100)}%`;
+}
+document.addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;D[k]=parseFloat(e.target.value)||0;save();calc()});
+$('use').onclick=()=>{const exp=D.e_tr+D.e_meal+D.e_ph+D.e_par+D.e_tax+D.e_os;D.contrib=Math.max(0,Math.round(D.inc-exp));document.querySelector('[data-k=contrib]').value=D.contrib;save();calc()};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.sec').forEach(x=>x.classList.remove('on'));b.classList.add('on');$(b.dataset.t).classList.add('on')});
+renderH();calc();
+const ys=h=>h.y||(h.t==='CSPX'?'CSPX.L':h.ccy==='SGD'?h.t+'.SI':h.ccy==='HKD'?h.t.replace(/\.HK$/,'')+'.HK':h.t);
+async function live(){const st=$('lv');st.textContent='Updating prices…';try{
+ const r=await fetch('/api/quotes?s='+[...new Set(D.hold.map(ys))].join(','));if(!r.ok)throw new Error('server '+r.status);const q=await r.json();let n=0;
+ D.hold.forEach(h=>{const x=q[ys(h)];if(x){h.p=x.p;h.d=new Date(x.t*1000).toLocaleString('en-SG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});n++}});
+ if(q['USDSGD=X']){D.fxu=q['USDSGD=X'].p;document.querySelector('[data-k=fxu]').value=D.fxu.toFixed(4)}
+ if(q['HKDSGD=X']){D.fxh=q['HKDSGD=X'].p;document.querySelector('[data-k=fxh]').value=D.fxh.toFixed(4)}
+ if(!n)throw new Error('no quotes: '+JSON.stringify(q._err||q).slice(0,90));lsave();renderH();calc();st.textContent='Live '+n+'/'+D.hold.length+' prices · '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})}
+ catch(e){st.textContent='Live prices unavailable ('+(e.message||e)+'), showing last saved'}}
+$('rf').onclick=live;document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull().then(live)});pull().then(live);
+</script></body></html>
