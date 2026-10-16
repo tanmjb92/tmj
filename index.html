@@ -70,7 +70,7 @@ $('as').innerHTML=[['age','Current age'],['ret','Retire at age'],['contrib','Mon
 $('cf').innerHTML=[['inc','Net salary'],['e_tr','Transport'],['e_meal','Meals + leisure'],['e_ph','Phone + household'],['e_par','Parents allowance'],['e_tax','Income tax'],['e_os','Overseas']].map(a=>inp(...a)).join('');
 const B=[['us','Global / US (CSPX)'],['bank','SG banks'],['reit','REITs'],['hk','HK / China'],['gold','Gold'],['cash','Cash / bonds']];
 $('tb').innerHTML=B.map(([k,l])=>`<tr><td>${l}</td><td id="v_${k}"></td><td id="n_${k}"></td><td><input type="number" inputmode="decimal" data-k="t_${k}" value="${D['t_'+k]}" style="width:56px"></td><td id="g_${k}"></td></tr>`).join('');
-const lsave=()=>{save()};
+const lsave=()=>{try{localStorage.setItem('ledger1',JSON.stringify(D))}catch(x){}};
 let stt;const save=()=>{D.ts=Date.now();lsave();clearTimeout(stt);stt=setTimeout(push,800)};
 const hdr=()=>{let p='';try{p=localStorage.getItem('ledgerpin')||''}catch(e){}return{'x-pin':p}};
 async function push(){try{await fetch('/api/state',{method:'PUT',headers:hdr(),body:JSON.stringify(D)})}catch(e){}}
